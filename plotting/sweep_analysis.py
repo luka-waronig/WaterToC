@@ -10,7 +10,7 @@ import numpy as np
 from water_toc.model import WaterToC
 
 def main():
-    # define sweep ranges
+    #define sweep ranges
     variable_params = {
         "theta": [0.5, 2.0, 5.0, 10],
         "max_water_capacity": [10, 20, 30, 40],
@@ -29,7 +29,7 @@ def main():
         "deviation_rate": 0.1
     }
 
-    # run simulations
+    #run simulations
     all_data = batch_run(
         WaterToC,
         parameters={**fixed_params, **variable_params},
