@@ -6,7 +6,7 @@ import numpy as np
 from typing import Tuple, List
 from scipy.spatial.distance import cdist
 from scipy.interpolate import splprep, splev
-from src.model import WaterToC
+from water_toc.model import WaterToC
 
 # --- Fixed Grid Dimensions ---
 FIXED_HEIGHT = 20
@@ -185,14 +185,14 @@ def TimeSeriesPlots():
             xanchor='left', 
             yanchor='top'
         ),
-        margin=dict(t=150, l=60, r=60, b=80),  # Increased top margin for legend
+        margin=dict(t=150, l=60, r=60, b=80),  
         legend=dict(
             orientation='h',
-            yanchor='bottom',  # Changed from 'top' to 'bottom'
-            y=1.05,  # Moved legend higher above the plot area
+            yanchor='bottom', 
+            y=1.05,  
             xanchor='center', 
             x=0.5,
-            bgcolor='rgba(255,255,255,0.8)',  # Semi-transparent background
+            bgcolor='rgba(255,255,255,0.8)',  
             bordercolor='rgba(0,0,0,0.2)',
             borderwidth=1
         )
@@ -217,12 +217,12 @@ def PhaseSpacePlot():
     fig.add_vline(x=thr,line_dash='dash',line_color='gray',annotation_text=f"1/θ={thr:.2f}",annotation_position='top')
     fig.update_layout(
         title='Phase Space',
-        width=600, height=500,  # Reduced from 900x700 to 600x500
+        width=600, height=500,  
         margin=dict(t=140, l=60, r=60, b=60),
         legend=dict(
             orientation='h', 
-            yanchor='bottom',  # Changed positioning
-            y=1.05,  # Moved higher above plot area
+            yanchor='bottom',  
+            y=1.05,  
             xanchor='center', 
             x=0.5,
             bgcolor='rgba(255,255,255,0.8)',
@@ -248,7 +248,7 @@ def LimitCyclePlot():
     fig.update_layout(
         title=f'Limit Cycle (~{period} steps)', 
         width=600, height=500,
-        margin=dict(t=140, l=60, r=60, b=60),  # Increased top margin
+        margin=dict(t=140, l=60, r=60, b=60),  
         showlegend=False
     )
     solara.FigurePlotly(fig)

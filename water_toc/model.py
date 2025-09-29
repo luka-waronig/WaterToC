@@ -5,6 +5,9 @@ import numpy as np
 import random
 from mesa.time import SimultaneousActivation
 from water_toc.agents import AI, Human, Strategy
+import os
+import json
+from datetime import datetime
 
 
 class WaterToC(Model):
@@ -26,11 +29,14 @@ class WaterToC(Model):
                  water_cell_density=0.3,
                  theta=3.0,
                  deviation_rate=0.1,
+                 save_snapshots=True,
+                snapshot_interval=1,
+                snapshot_dir="snapshots",
                  seed=None):
         """Initializes the Water Tragedy of Commons model."""
         super().__init__(seed=seed)
 
-        # store all parameters passed from the server
+        #store all parameters passed from the server
         self.height = height
         self.width = width
         self.initial_humans = initial_humans
@@ -44,17 +50,21 @@ class WaterToC(Model):
         self.theta = theta
         self.deviation_rate = deviation_rate
 
-        # initialize grid, agent list, and model running state
+        #initialize grid, agent list, and model running state
         self.grid = MultiGrid(self.width, self.height, True)
         self.agents = []
         self.running = True
-        self.schedule = SimultaneousActivation(self)   # ★ create a scheduler
+        self.schedule = SimultaneousActivation(self)   #create a scheduler
 
         self._create_water_environment()
         self._create_agents()       
     
-
-        # set up the data collector
+        self.save_snapshots = save_snapshots
+        self.snapshot_interval = max(1, int(snapshot_interval))
+        self.snapshot_dir = snapshot_dir
+        os.makedirs(self.snapshot_dir, exist_ok=True)
+        self.step_count = 0
+        #set up the data collector
         reporters = {
             "Total_Water": self._get_total_water,
             "Total_Water_Capacity": self._get_total_water_capacity,
@@ -69,9 +79,11 @@ class WaterToC(Model):
             "theta": lambda m: m.theta,
             "Avg_Water_Per_Cell": self._get_avg_water_per_cell,
             "Local_Coop_Variance": lambda m: np.var(m._get_local_cooperation_map()),
-        }
+            "Coop_Map_Flat": self._get_local_cooperation_map_flat,
+            "Agent_Pos_Strats": self._get_agent_pos_strategies_list,
+}
 
-        # sample k water cells for local water level reporting
+        #sample k water cells for local water level reporting
         water_positions = list(zip(*np.where(self.has_water)))
         k = 3
         if len(water_positions) >= k:
@@ -96,7 +108,7 @@ class WaterToC(Model):
                 if self.random.random() < self.water_cell_density:
                     self.has_water[x, y] = True
                     self.water_capacity[x, y] = self.max_water_capacity
-                    self.water_levels[x, y] = self.max_water_capacity # start at full capacity
+                    self.water_levels[x, y] = self.max_water_capacity #start at full capacity
                     self.replenishment_rates[x, y] = self.random.uniform(0.1, 0.5)
 
     def _create_agents(self):
@@ -106,7 +118,7 @@ class WaterToC(Model):
             strategy = self.random.choice([Strategy.COOPERATE, Strategy.DEFECT])
             agent = Human(self.next_id(), self, strategy)
             agent.set_game(R=3, S=0, T=5, P=1)
-            # pass model-level allocation parameters to each agent
+            #pass model-level allocation parameters to each agent
             agent.C_allocation = self.human_C_allocation
             agent.D_allocation = self.human_D_allocation
             pos = self._get_random_empty_cell()
@@ -169,7 +181,7 @@ class WaterToC(Model):
                     local_feedback_term = np.clip(1.0 + 0.5 * env_capacity_factor * local_feedback_strength, 0.1, 3.0)
                     effective_replenishment = self.replenishment_rates[x, y] * local_feedback_term
 
-                # apply replenishment, ensuring it doesn't exceed capacity
+                #apply replenishment, ensuring it doesn't exceed capacity
                 self.water_levels[x, y] = min(self.water_capacity[x, y], self.water_levels[x, y] + effective_replenishment)
 
     def get_water_at(self, pos):
@@ -211,16 +223,42 @@ class WaterToC(Model):
                     local_cooperators = sum(1 for agent in agents_in_neighborhood if agent.strategy == Strategy.COOPERATE)
                     coop_map[x, y] = local_cooperators / local_total
                 else:
-                    coop_map[x, y] = 0.5 #assume neutral if no agents are present
+                    coop_map[x, y] = 0.5 
         return coop_map
+    
+    def _save_spatial_snapshot(self):
+        base = os.path.join(self.snapshot_dir, "snapshots.jsonl")
+
+        coop_map = self._get_local_cooperation_map().tolist()
+        agents = self._get_agent_pos_strategies_table()
+
+        row = {
+            "step": self.step_count,
+            "coop_map": coop_map,
+            "agents": agents,
+            "water_levels": self.water_levels.tolist(),
+            "water_capacity": self.water_capacity.tolist(),
+            "has_water": self.has_water.tolist(),
+        }
+
+        with open(base, "a", encoding="utf-8") as f:
+            f.write(json.dumps(row) + "\n")
+
+
 
     def step(self):
-    #environment updates first
+    # environment updates first
         self.replenish_water()
-    #scheduler runs both phases (step and advance) for all agents
+    # scheduler runs both phases (step and advance) for all agents
         self.schedule.step()
-    #records data
+    # bookkeeping
+        self.step_count += 1
+    # records data
         self.datacollector.collect(self)
+    # optionally persist spatial snapshots
+        if self.save_snapshots and (self.step_count % self.snapshot_interval == 0):
+            self._save_spatial_snapshot()
+
 
 ###Reporter methods for data collection
 
@@ -273,3 +311,36 @@ class WaterToC(Model):
         if total_ai == 0: return 0
         ai_cooperators = self._count_agents(agent_type=AI, strategy=Strategy.COOPERATE)
         return ai_cooperators / total_ai
+    
+    def _get_local_cooperation_map_flat(self):
+    
+        return self._get_local_cooperation_map().flatten().tolist()
+
+    def _get_agent_pos_strategies_list(self):
+    
+        out = []
+        for a in self.agents:
+            if getattr(a, "pos", None) is None:
+                continue
+            kind = type(a).__name__
+            sx, sy = a.pos
+            strat = getattr(a, "strategy", None)
+            strat = getattr(strat, "value", None)
+            out.append((int(a.unique_id), kind, int(sx), int(sy), strat))
+        return out
+
+    def _get_agent_pos_strategies_table(self):
+    
+        rows = []
+        for a in self.agents:
+            if getattr(a, "pos", None) is None:
+                continue
+            sx, sy = a.pos
+            rows.append({
+                "id": int(a.unique_id),
+                "type": type(a).__name__,
+                "x": int(sx),
+                "y": int(sy),
+                "strategy": getattr(getattr(a, "strategy", None), "value", None),
+            })
+        return rows

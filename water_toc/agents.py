@@ -18,18 +18,18 @@ Agents decide their strategy based on local water availability, with a configura
 rate of deviation from their optimal choice.
 """
 
-# strategy enum
+#strategy enum
 class Strategy(str, Enum):
     COOPERATE = "C"
     DEFECT = "D"
 
-# base agent class for humans and ai
+#base agent class for humans and ai
 class BaseAgent(Agent):
     def __init__(self, unique_id, model, pos=None):
         super().__init__(unique_id, model)
         self.pos = pos
 
-    # shorthand for accessing strategies
+    #shorthand for accessing strategies
     @property
     def COOPERATE(self):
         return Strategy.COOPERATE
@@ -54,17 +54,17 @@ class BaseAgent(Agent):
         returns:
             env_matrix: 2x2 numpy array for the environment-dependent payoff matrix.
         """
-        # read payoffs from the game matrix
-        R = self.game[0][0]  # reward for mutual cooperation
-        S = self.game[0][1]  # sucker's payoff
-        T = self.game[1][0]  # temptation to defect
-        P = self.game[1][1]  # punishment for mutual defection
+        #read payoffs from the game matrix
+        R = self.game[0][0]  #reward for mutual cooperation
+        S = self.game[0][1]  #sucker's payoff
+        T = self.game[1][0]  #temptation to defect
+        P = self.game[1][1]  #punishment for mutual defection
 
-        # weitz formula: A(n) = (1-n) * degraded_matrix + n * pristine_matrix
+        #Weitz formula: A(n) = (1-n) * degraded_matrix + n * pristine_matrix
         degraded_matrix = np.array([[T, P], [R, S]])
         pristine_matrix = np.array([[R, S], [T, P]])
 
-        # interpolate between degraded and pristine states
+        #interpolate between degraded and pristine states
         env_matrix = (1 - n) * degraded_matrix + n * pristine_matrix
 
         return env_matrix
@@ -93,15 +93,15 @@ class BaseAgent(Agent):
         returns:
             strategy (Strategy): the selected strategy.
         """
-        # determine the optimal strategy
+        #determine the optimal strategy
         optimal_strategy = self.choose_best_action(env_game)
 
-        # check for a random deviation
+        #check for a random deviation
         if self.model.random.random() < deviation_rate:
-            # deviate by choosing the opposite strategy
+            #deviate by choosing the opposite strategy
             return self.DEFECT if optimal_strategy == self.COOPERATE else self.COOPERATE
         else:
-            # otherwise, follow the optimal strategy
+            #otherwise, follow the optimal strategy
             return optimal_strategy
 
     def get_neighbors(self, radius=1, include_center=False):
@@ -118,7 +118,7 @@ class Human(BaseAgent):
         self.human_C_allocation = model.human_C_allocation
         self.human_D_allocation = model.human_D_allocation
 
-        # store action for simultaneous execution
+        #store action for simultaneous execution
         self.planned_action = None
         self.target_pos = None
 
@@ -130,17 +130,17 @@ class Human(BaseAgent):
         water_positions = self.model.get_water_positions_near(self.pos)
 
         if not water_positions:
-            return  # no water nearby
+            return  
 
-        # pick a random, nearby water cell
+        #pick a random, nearby water cell
         self.target_pos = self.model.random.choice(water_positions)
 
-        # calculate the environmental state 'n' for the target cell
+        #calculate the environmental state 'n' for the target cell
         water_level = self.model.get_water_at(self.target_pos)
         max_capacity = self.model.water_capacity[self.target_pos[0], self.target_pos[1]]
         n = water_level / max_capacity if max_capacity > 0 else 0
 
-        # choose strategy based on the environment, with a chance to deviate
+        #choose strategy based on the environment, with a chance to deviate
         env_game = self.weitz_matrix_env(n)
         self.strategy = self.choose_action_with_deviation(env_game, self.model.deviation_rate)
         self.planned_action = self.strategy
@@ -153,7 +153,7 @@ class Human(BaseAgent):
             else:
                 self.model.consume_water_at(self.target_pos, self.human_D_allocation)
 
-        # reset planned action for the next tick
+        #reset planned action for the next tick
         self.planned_action = None
         self.target_pos = None
 
@@ -164,7 +164,7 @@ class AI(BaseAgent):
         self.ai_C_allocation = model.ai_C_allocation
         self.ai_D_allocation = model.ai_D_allocation
 
-        # store action for simultaneous execution
+        #store action for simultaneous execution
         self.planned_action = None
         self.target_pos = None
 
@@ -178,15 +178,15 @@ class AI(BaseAgent):
         if not water_positions:
             return  # no water nearby
 
-        # pick a random, nearby water cell
+        #pick a random, nearby water cell
         self.target_pos = self.model.random.choice(water_positions)
 
-        # calculate the environmental state 'n' for the target cell
+        #calculate the environmental state 'n' for the target cell
         water_level = self.model.get_water_at(self.target_pos)
         max_capacity = self.model.water_capacity[self.target_pos[0], self.target_pos[1]]
         n = water_level / max_capacity if max_capacity > 0 else 0
 
-        # choose strategy based on the environment, with a chance to deviate
+        #choose strategy based on the environment, with a chance to deviate
         env_game = self.weitz_matrix_env(n)
         self.strategy = self.choose_action_with_deviation(env_game, self.model.deviation_rate)
         self.planned_action = self.strategy
@@ -199,6 +199,6 @@ class AI(BaseAgent):
             else:
                 self.model.consume_water_at(self.target_pos, self.ai_D_allocation)
                 
-        # reset planned action for the next tick
+        #reset planned action for the next tick
         self.planned_action = None
         self.target_pos = None
