@@ -286,18 +286,15 @@ def StabilityAnalysis():
 @solara.component
 def DescriptionText():
     solara.Markdown("""
-## Agent-based model for simulating coevolutionary game-environment dynamics in spatial Human & AI agent-based populations sourcing from a shared commons
-
-#### The "Water Commons" ABM model was developed for multidisciplinary research of human-AI alignment (which includes and is in this case motivated by sustainable governance of the environment and its resources) and complex nonlinear dynamics in socio-technological systems.
-    """)
-    solara.Image("public/ABMenv.png", width="70%")
+## Coevolutionary Dynamics of Cooperation and Environmental Sustainability in Shared Resource Systems
+ """)
+    #solara.Image("public/ABMenv.png", width="70%")
     solara.Markdown("""
-
-This is the first agent-based modelling framework for simulating cooperative games around human-AI shared commons resources, in efforts of computationally studying the emergent socio-environmental dilemma in light of the recent AI industrialization wave (thus increasing data center demands). Cooperation strategies and the state of the environment co-evolve. The theory, methods and subsequent analyses are focused through the lens of (complex) systems and nonlinear dynamics, including global (parameter) sensitivity analysis. Beyond the methodological rigour, the multi-agent framework and some interesting mathematics, there is a broader intent of helping policy-makers and policy analysts to propose quantitative (i.e., statistical), evidence-based recommendations or guidelines for public (but also private) entities, regarding their implementation of daily operations and institutional decision-making.
-
-#### The Initial Chapter (UvA)
-The first experimental chapter with this ABM, conducted at the University of Amsterdam, conducted several experiments each with many stochastic trials, and concluded with findings that fixed point attractors drive the time series of x and n to stabilize at the region of a median x* ~ 0.72 and n* ~ 0.38 in most runs of the experiment simulations, notably deviating from the theoretical prediction that {x*, n*} = {1/(1+theta), 1/2}. That mean field approximation cannot capture this co-evolution in the same way because it misses the stochastic and spatial elements. ABM also enables the study of specific parameter sensitivities and unlocks completely new areas of human-AI alignment research (where sustainability is a broad but very powerful concept). (Hence also the delivery of quantitative evidence-based policy insights.)
+The "Water Commons" ABM model was developed for multidisciplinary research of human-AI alignment (which includes and is in this case motivated by sustainable governance of the environment and its resources) and complex nonlinear dynamics in socio-technological systems.
+    
+The broader motivation behind this project is to help policy-makers and policy analysts to propose quantitative (i.e., statistical), evidence-based recommendations or guidelines for public (but also private) entities, regarding their implementation of daily operations and institutional decision-making.
     """)
+    solara.Image("public/ABMenv.png", width="80%")
 
 @solara.component
 def ParameterDocs():
@@ -330,11 +327,11 @@ def Page():
         TimeSeriesPlots(); PhaseSpacePlot(); LimitCyclePlot()
     '''
     with solara.Row():
-        with solara.Column():
+        with solara.Column(style={"width": "1200px"}):
             TimeSeriesPlots()
             PhaseSpacePlot()
             LimitCyclePlot()
-        with solara.Column():
+        with solara.Column(style={"width": "500px"}):
             DescriptionText()
 
 if __name__=='__main__':
