@@ -344,3 +344,4 @@ class WaterToC(Model):
                 "strategy": getattr(getattr(a, "strategy", None), "value", None),
             })
         return rows
+    

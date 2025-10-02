@@ -31,8 +31,8 @@ The interactive dashboard allows for the adjustment of several key parameters:
 
 1.  **Clone the repository:**
     ```bash
-    git clone (https://github.com/3mmdrew/Assignment-ABM)
-    cd Assignment-ABM
+    git clone (https://github.com/slavica01/WaterToC)
+    cd WaterToC
     ```
 
 2.  **Create and activate a virtual environment:**
