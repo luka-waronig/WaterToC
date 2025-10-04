@@ -283,6 +283,7 @@ def StabilityAnalysis():
 """
         )
 
+
 @solara.component
 def DescriptionText():
     solara.Markdown("""
@@ -292,9 +293,9 @@ def DescriptionText():
     solara.Markdown("""
 The "Water Commons" ABM model was developed for multidisciplinary research of human-AI alignment (which includes and is in this case motivated by sustainable governance of the environment and its resources) and complex nonlinear dynamics in socio-technological systems.
     
-The broader motivation behind this project is to help policy-makers and policy analysts to propose quantitative (i.e., statistical), evidence-based recommendations or guidelines for public (but also private) entities, regarding their implementation of daily operations and institutional decision-making.
+Beyond its academic research purposes, the broader motivation behind this project is to help policy-makers and policy analysts to propose quantitative (i.e., statistical), evidence-based recommendations or guidelines for public and private entities, regarding their implementation of daily operations and institutional decision-making, including AI governance.
     """)
-    solara.Image("public/ABMenv.png", width="80%")
+    solara.Image("public/ABMenv.png", width="90%")
 
 @solara.component
 def ParameterDocs():
