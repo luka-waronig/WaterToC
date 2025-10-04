@@ -81,8 +81,9 @@ class WaterToC(Model):
             "Local_Coop_Variance": lambda m: np.var(m._get_local_cooperation_map()),
             "Coop_Map_Flat": self._get_local_cooperation_map_flat,
             "Agent_Pos_Strats": self._get_agent_pos_strategies_list,
-}
-
+        }
+        
+        
         #sample k water cells for local water level reporting
         water_positions = list(zip(*np.where(self.has_water)))
         k = 3
