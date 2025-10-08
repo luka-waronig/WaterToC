@@ -81,6 +81,7 @@ class WaterToC(Model):
             "Local_Coop_Variance": lambda m: np.var(m._get_local_cooperation_map()),
             "Coop_Map_Flat": self._get_local_cooperation_map_flat,
             "Agent_Pos_Strats": self._get_agent_pos_strategies_list,
+            "HasWater_Flat": lambda m: m.has_water.flatten().astype(int).tolist()
 }
 
         #sample k water cells for local water level reporting
@@ -178,7 +179,8 @@ class WaterToC(Model):
                     current_n = self.water_levels[x, y] / self.water_capacity[x, y] if self.water_capacity[x, y] > 0 else 0
                     env_capacity_factor = current_n * (1 - current_n)
                     #combine terms to get the final feedback multiplier
-                    local_feedback_term = np.clip(1.0 + 0.5 * env_capacity_factor * local_feedback_strength, 0.1, 3.0)
+                    # Never below baseline; keep the positive side unchanged
+                    local_feedback_term = np.clip(1.0 + 0.5 * env_capacity_factor * local_feedback_strength, 1.0, 3.0)
                     effective_replenishment = self.replenishment_rates[x, y] * local_feedback_term
 
                 #apply replenishment, ensuring it doesn't exceed capacity
@@ -344,4 +346,4 @@ class WaterToC(Model):
                 "strategy": getattr(getattr(a, "strategy", None), "value", None),
             })
         return rows
-    
+

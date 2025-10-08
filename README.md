@@ -1,5 +1,5 @@
 # Agent-Based Model of Tragedy of the Commons with Environmental Feedback
-
+## (paper title: Coevolutionary Dynamics of Cooperation and Environmental Sustainability in Shared Resource Systems)
 We created an interactive agent-based model simulating consumption of a shared, renewable resource using a game-theoretic framework with environmental feedback. Although its original use was to simulate a ToC scenario with water as the shared resource, it can be applicable for a variety of scenarios including simulating climate disasters, environmental sensitivity to resource consumption, or influence of environmental degradation to agent behaviour.
 The primary goal of the model is to explore the socio-environmental feedback loops that lead to complex system dynamics like limit cycles or fixed-point stability. It was inspired by the Demographic Prisoner’s Dilemma on a Grid (https://mesa.readthedocs.io/stable/examples/advanced/pd_grid.html#demographic-prisoner-s-dilemma-on-a-grid). The main innovation of this model is the added environmental feedback interpolating the expected payoffs (as introduced by the oscillating ToC dynamical system studied by Weitz et al 2016), but in a stochastic heterogeneous agent-based setting with with local resource consumption and replenishment.
 
