@@ -79,6 +79,3 @@ The `plotting/` directory contains scripts for offline analysis and visualizatio
     * `fpoint.py` :  creates a scatterplot of runs that end up in fixed points, as well as a table of runs which end up with fixed points more than 50% of the time.
 * `cwd.py`: Performs a time-frequency analysis on the simulation output data (water_toc_sweep_results.csv). Its primary purpose is to identify and characterize oscillatory dynamics in the cooperation fraction using a Continuous Wavelet Transform (CWT).
 * `peak_envelope_oscillations.py`: This script performs a quantitative analysis of the oscillatory dynamics found in the simulation data. Instead of visualizing the frequency content like the wavelet script, this one uses a peak-envelope analysis.
-* `spatial_analysis_plotting.py`: Outputs spatial analysis measures such as Moran´s I, fractions of cooperators, largest cooperative cluster sizes, median cooperative cluster sizes, as well as the size of the largest cooperative cluster.
-
-<img src="public/screenshot.png" alt="Solara.dev Application" width="600">
