@@ -80,4 +80,6 @@ The `plotting/` directory contains scripts for offline analysis and visualizatio
 * `cwd.py`: Performs a time-frequency analysis on the simulation output data (water_toc_sweep_results.csv). Its primary purpose is to identify and characterize oscillatory dynamics in the cooperation fraction using a Continuous Wavelet Transform (CWT).
 * `peak_envelope_oscillations.py`: This script performs a quantitative analysis of the oscillatory dynamics found in the simulation data. Instead of visualizing the frequency content like the wavelet script, this one uses a peak-envelope analysis.
 
+
+Interactive ABM application dashboard created using solara.dev:
 <img src="public/screenshot.png" alt="Solara.dev application dashboard" width="1200">
