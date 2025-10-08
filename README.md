@@ -8,7 +8,7 @@ While Mesa version 3.0 was available at the time of this project's finalization,
 
 ## Features
 
-* **Interactive Dashboard:** Allows users to adjust model parameters in real-time using the Solara web interface. The interface visualizes several important plots for behaviour analysis such as cooperation fractions, detects limit cycles if present, and provides important statistical summaries.
+* **Interactive Dashboard:** Allows users to adjust model parameters in real-time using the Solara web interface. The interface visualizes several important plots for behaviour analysis such as cooperation fractions, detects limit cycles if present, and provides important statistical summaries. It also provides users with a visualization of the grid on the last timestep.
 * **Complex Agent Behavior:** Agents' strategies are determined by a game-theoretic model influenced by current environmental states.
 * **Advanced Analysis:** Besides the Solara interface, the project includes scripts for generating various visualizations, including heatmaps, 3D plots, and limit cycle diagrams from simulation data.
 
@@ -67,15 +67,16 @@ The `plotting/` directory contains scripts for offline analysis and visualizatio
 ## File Descriptions
 
 * `server.py`: The main Solara application. This script creates the interactive dashboard, including all UI components and plots.
-* `src/model.py`: Defines the core `WaterToC` Mesa model, which manages the grid, agent scheduling, and environmental state.
-* `src/agents.py`: Defines the `Human` and `AI` agent classes and their decision-making logic.
+* `water_toc/model.py`: Defines the core `WaterToC` Mesa model, which manages the grid, agent scheduling, and environmental state.
+* `water_toc/agents.py`: Defines the `Human` and `AI` agent classes and their decision-making logic.
 
 ### Plotting & Analysis
 
 * `plotting/`: A directory containing all scripts for data analysis and visualization.
     * `3Dplots_coop.py` / `3Dplots_env.py`: Scripts to generate 3D surface plots for cooperation and environment state gotten from parameter sweep data.
-    * `heatmap.py`: Script to generate heatmaps for cooperation & environment from parameter sweep data.
-    * `sweep_analysis.py`: Main script for running parameter sweeps and generating the output CSV called `water_toc_sweep_results.csv` used by the plotting scripts - this file is too large to upload to github, but one can produce it by running sweep_analysis.py.
-    * `limit_cycle_instances.py` / `fpoint.py` : Scripts focused on analyzing and plotting specific system dynamics like limit cycles and fixed points. `limit_cycle_instances.py` creates instances of limit cycles (amount of images is adjustable), whereas `fpoint.py` creates a scatterplot of runs that end up in fixed points.
+    * `sweep_analysis.py`: Main script for running parameter sweeps and generating the output CSV called `water_toc_sweep_results.csv` used by the plotting scripts.
+    * `spatial_analysis_plotting.py`: Main script for running a parameter sweep for spatial plotting. It outputs a file called `summary_agents_clusters_and_pointprocess_MEDIANS.csv` and `pair_stats_ripley_MEDIANS.csv.csv`
+    * `fpoint.py` :  creates a scatterplot of runs that end up in fixed points, as well as a table of runs which end up with fixed points more than 50% of the time.
 * `cwd.py`: Performs a time-frequency analysis on the simulation output data (water_toc_sweep_results.csv). Its primary purpose is to identify and characterize oscillatory dynamics in the cooperation fraction using a Continuous Wavelet Transform (CWT).
 * `peak_envelope_oscillations.py`: This script performs a quantitative analysis of the oscillatory dynamics found in the simulation data. Instead of visualizing the frequency content like the wavelet script, this one uses a peak-envelope analysis.
+* `spatial_analysis_plotting.py`: Outputs spatial analysis measures such as Moran´s I, fractions of cooperators, largest cooperative cluster sizes, median cooperative cluster sizes, as well as the size of the largest cooperative cluster.

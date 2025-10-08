@@ -167,9 +167,11 @@ def run_simulation() -> pd.DataFrame:
             deviation_rate=deviation_rate.value,
             seed=seed.value,
         )
+
         for i in range(max_steps.value):
             m.step()
             current_step.value = i + 1
+
         grid_state.value = {
             "water_levels": m.water_levels.copy(),
             "water_capacity": m.water_capacity.copy(),
@@ -179,10 +181,12 @@ def run_simulation() -> pd.DataFrame:
             "height": m.height,
         }
         return m.datacollector.get_model_vars_dataframe()
+
     except Exception as e:
         print("Simulation error:", e)
         grid_state.value = None
         return pd.DataFrame()
+
 
 
 @solara.component

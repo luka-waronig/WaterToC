@@ -210,7 +210,7 @@ class WaterToC(Model):
 
     def get_water_positions_near(self, pos, radius=1):
         """Gets a list of positions with water near a given location."""
-        neighbors = self.grid.get_neighborhood(pos, moore=True, include_center=False, radius=radius)
+        neighbors = self.grid.get_neighborhood(pos, moore=True, include_center=True, radius=radius)
         return [neighbor for neighbor in neighbors if self.get_water_at(neighbor) > 0]
 
     def _get_local_cooperation_map(self):
